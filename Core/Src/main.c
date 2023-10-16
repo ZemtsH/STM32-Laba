@@ -104,14 +104,38 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  MPU6050_Read_All(&hi2c1, &MPU6050);
-	  HAL_Delay(1);
+	  HAL_Delay(20);
+
+	  sprintf(str, "%9.6f", MPU6050.Ax);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+	  sprintf(str, "%9.6f", MPU6050.Ay);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+	  sprintf(str, "%9.6f", MPU6050.Az);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+
+	  sprintf(str, "%9.6f", MPU6050.Gx);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+	  sprintf(str, "%9.6f", MPU6050.Gy);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+	  sprintf(str, "%9.6f", MPU6050.Gz);
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+
 	  sprintf(str, "%9.6f", MPU6050.KalmanAngleX);
-	  str[9]=44;
+	  str[9]=44; // ,
 	  HAL_UART_Transmit(&huart2, str, 10 , 1);
 	  sprintf(str, "%9.6f", MPU6050.KalmanAngleY);
-	  str[9]=59;
-	  str[10]=13;
-	  str[11]=10;
+	  str[9]=44; // ,
+	  HAL_UART_Transmit(&huart2, str, 10 , 1);
+	  sprintf(str, "%9.6f", MPU6050.KalmanAngleZ);
+	  str[9]=59; // ;
+	  str[10]=13; // CR
+	  str[11]=10; // LF
 	  HAL_UART_Transmit(&huart2, str, 12 , 1);
   }
   /* USER CODE END 3 */
