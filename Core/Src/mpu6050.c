@@ -63,6 +63,12 @@ Kalman_t KalmanY = {
     .R_measure = 0.03f,
 };
 
+Kalman_t KalmanZ = {
+    .Q_angle = 0.001f,
+    .Q_bias = 0.003f,
+    .R_measure = 0.03f,
+};
+
 uint8_t MPU6050_Init(I2C_HandleTypeDef *I2Cx)
 {
     uint8_t check;
@@ -181,12 +187,11 @@ void MPU6050_Read_All(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
     // Kalman angle solve
     double dt = (double)(HAL_GetTick() - timer) / 1000;
     timer = HAL_GetTick();
-    double roll;
-    double roll_sqrt = sqrt(
+    double roll = sqrt(
         DataStruct->Accel_X_RAW * DataStruct->Accel_X_RAW + DataStruct->Accel_Z_RAW * DataStruct->Accel_Z_RAW);
-    if (roll_sqrt != 0.0)
+    if (roll != 0.0)
     {
-        roll = atan(DataStruct->Accel_Y_RAW / roll_sqrt) * RAD_TO_DEG;
+        roll = atan(DataStruct->Accel_Y_RAW / roll) * RAD_TO_DEG;
     }
     else
     {
@@ -205,6 +210,7 @@ void MPU6050_Read_All(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
     if (fabs(DataStruct->KalmanAngleY) > 90)
         DataStruct->Gx = -DataStruct->Gx;
     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
+    DataStruct->KalmanAngleZ = Kalman_getAngle(&KalmanZ,    0, DataStruct->Gz, dt);
 }
 
 double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt)
